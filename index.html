@@ -48,9 +48,13 @@
         .navbar {
             max-width: 1300px; margin: 0 auto;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 5%;
+            padding: 0.8rem 5%;
         }
-        .logo-img { height: 50px; width: auto; object-fit: contain; }
+        
+        /* Logo bem maior */
+        .logo-img { height: 90px; width: auto; object-fit: contain; transition: var(--transition); }
+
+        .nav-right-container { display: flex; align-items: center; gap: 25px; }
         .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
         .nav-links a {
             font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
@@ -60,8 +64,11 @@
         .nav-links a:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
         .admin-link {
             background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
-            padding: 6px 14px; border-radius: 6px; color: var(--accent) !important;
+            padding: 8px 16px; border-radius: 6px; color: var(--accent) !important;
+            font-size: 0.8rem !important; font-weight: 600 !important; cursor: pointer;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
         }
+        .admin-link:hover { background: var(--accent); color: #000 !important; box-shadow: 0 0 15px var(--accent-glow); }
 
         /* --- Hero Section --- */
         #home {
@@ -185,7 +192,8 @@
         .jc-brand { color: var(--accent); font-weight: 600; text-decoration: none; }
 
         @media (max-width: 768px) {
-            .nav-links { display: none; }
+            .nav-links { display: none; } /* Oculta os links rápidos no telemóvel, mas o botão ADMIN continua visível */
+            .logo-img { height: 65px; } /* Ajuste proporcional da logo maior em telas pequenas */
             .form-grid { grid-template-columns: 1fr; }
             .form-group.full { grid-column: span 1; }
             #home { background-attachment: scroll; }
@@ -195,19 +203,21 @@
 </head>
 <body>
 
-    <!-- Header com o Botão Admin Destacado -->
+    <!-- Header com a Logo Maior e o Botão Admin Sempre Visível (inclusive no Telemóvel) -->
     <header>
         <nav class="navbar">
             <div class="logo">
                 <img src="logo.png" alt="Vini Polimentos Logo" class="logo-img">
             </div>
-            <ul class="nav-links">
-                <li><a href="#home">Início</a></li>
-                <li><a href="#servicos">Serviços</a></li>
-                <li><a href="#agendamento">Agendar</a></li>
-                <li><a href="#localizacao">Localização</a></li>
-                <li><a onclick="openAdminLogin()" class="admin-link"><i class="fa-solid fa-lock"></i> ADMIN</a></li>
-            </ul>
+            <div class="nav-right-container">
+                <ul class="nav-links">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#agendamento">Agendar</a></li>
+                    <li><a href="#localizacao">Localização</a></li>
+                </ul>
+                <a onclick="openAdminLogin()" class="admin-link"><i class="fa-solid fa-lock"></i> ADMIN</a>
+            </div>
         </nav>
     </header>
 
