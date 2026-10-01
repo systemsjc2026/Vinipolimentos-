@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vini Polimentos | Estética Automotiva Premium</title>
+    
+    <!-- Fontes e Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Supabase SDK & Chart.js para os Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #070707;
+            --bg-card: rgba(20, 20, 20, 0.75);
+            --accent: #00e5ff;
+            --accent-glow: rgba(0, 229, 255, 0.4);
+            --text-main: #ffffff;
+            --text-dim: #a1a1aa;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- Header / Navegação --- */
+        header {
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: rgba(7, 7, 7, 0.85); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            transition: var(--transition);
+        }
+        .navbar {
+            max-width: 1300px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 5%;
+        }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
+        .nav-links a {
+            font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-dim); transition: var(--transition);
+            cursor: pointer;
+        }
+        .nav-links a:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        .admin-link {
+            background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
+            padding: 6px 14px; border-radius: 6px; color: var(--accent) !important;
+        }
+
+        /* --- Hero Section --- */
+        #home {
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(7,7,7,0.3) 0%, rgba(7,7,7,0.95) 90%, var(--bg-base) 100%), 
+                        url('fundo.jpg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 0 5%; position: relative;
+        }
+        .hero-badge {
+            background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); padding: 6px 18px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 20px; box-shadow: 0 0 15px var(--accent-glow);
+        }
+        #home h1 {
+            font-size: clamp(2.2rem, 6vw, 4.5rem); font-weight: 900;
+            line-height: 1.1; margin-bottom: 20px; text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        #home h1 span { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+        #home p {
+            color: var(--text-dim); margin-bottom: 40px; max-width: 650px;
+            font-size: 1.1rem; font-weight: 300;
+        }
+
+        /* --- Botões --- */
+        .btn-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn {
+            padding: 15px 35px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+            display: inline-flex; align-items: center; gap: 10px; transition: var(--transition);
+            cursor: pointer; border: none; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 0 25px var(--accent-glow); }
+        .btn-primary:hover { transform: translateY(-3px); background: #fff; box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
+        .btn-outline { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid var(--border-glass); color: #fff; }
+        .btn-outline:hover { border-color: var(--accent); background: rgba(0, 229, 255, 0.05); }
+        .btn-google { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; }
+        .btn-google:hover { background: #ea4335; border-color: #ea4335; box-shadow: 0 0 20px rgba(234, 67, 53, 0.5); }
+        .btn-danger { background: #ef4444; color: #fff; padding: 8px 15px; font-size: 0.75rem; }
+        .btn-success { background: #10b981; color: #fff; padding: 8px 15px; font-size: 0.75rem; }
+
+        /* --- Seções --- */
+        section { padding: 100px 5%; max-width: 1250px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.2rem; margin-bottom: 10px; color: #fff; }
+        .section-header h2 span { color: var(--accent); }
+        .section-header p { color: var(--text-dim); font-size: 0.95rem; }
+
+        /* --- Serviços --- */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .service-card {
+            background: var(--bg-card); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass); padding: 45px 35px;
+            border-radius: 16px; transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .service-card:hover { transform: translateY(-8px); border-color: rgba(0, 229, 255, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .service-card i { font-size: 2.8rem; color: var(--accent); margin-bottom: 25px; display: block; }
+        .service-card h3 { font-size: 1.25rem; margin-bottom: 10px; }
+        .service-card .price-tag { font-family: 'Orbitron', sans-serif; color: var(--accent); font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; display: block; }
+        .service-card p { color: var(--text-dim); font-size: 0.9rem; font-weight: 300; }
+
+        /* --- Agendamento --- */
+        #agendamento {
+            background: linear-gradient(135deg, rgba(20,20,20,0.8), rgba(10,10,10,0.95));
+            border: 1px solid var(--border-glass); border-radius: 20px;
+            padding: 60px 8%; margin: 50px auto; backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+        .booking-wrapper { max-width: 700px; margin: 0 auto; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group.full { grid-column: span 2; }
+        .form-group label { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 16px; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-glass); color: #fff; border-radius: 8px;
+            font-size: 0.95rem; font-family: 'Poppins', sans-serif; transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); background: rgba(0,0,0,0.8);
+        }
+        .form-group select option { background: #111; color: #fff; }
+
+        /* --- Localização --- */
+        #localizacao {
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            border-radius: 20px; padding: 50px 5%; text-align: center; margin-bottom: 60px;
+        }
+        .loc-content { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .loc-content i { font-size: 2.5rem; color: var(--accent); }
+        .loc-content p { color: var(--text-dim); font-size: 1rem; }
+
+        /* --- Painel Administrativo --- */
+        #admin-section {
+            display: none; background: #0c0c0c; border: 1px solid var(--accent);
+            border-radius: 20px; padding: 40px; margin: 40px auto; max-width: 1250px; box-shadow: 0 0 50px rgba(0,229,255,0.15);
+        }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-glass); padding-bottom: 20px; }
+        .admin-tabs { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        
+        .admin-panel-content { display: none; }
+        .admin-panel-content.active { display: block; }
+
+        .table-container { width: 100%; overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th, td { padding: 15px; border-bottom: 1px solid var(--border-glass); }
+        th { color: var(--accent); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 1px; }
+
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 20px; }
+        .chart-box { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 12px; border: 1px solid var(--border-glass); }
+
+        /* Rodapé */
+        footer {
+            text-align: center; padding: 40px 20px;
+            border-top: 1px solid var(--border-glass); margin-top: 40px;
+            color: var(--text-dim); font-size: 0.85rem;
+        }
+        .jc-brand { color: var(--accent); font-weight: 600; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            #home { background-attachment: scroll; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header com o Botão Admin Destacado -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="Vini Polimentos Logo" class="logo-img">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Início</a></li>
+                <li><a href="#servicos">Serviços</a></li>
+                <li><a href="#agendamento">Agendar</a></li>
+                <li><a href="#localizacao">Localização</a></li>
+                <li><a onclick="openAdminLogin()" class="admin-link"><i class="fa-solid fa-lock"></i> ADMIN</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- PAINEL ADMINISTRATIVO -->
+    <section id="admin-section">
+        <div class="admin-header">
+            <h2><i class="fa-solid fa-gauge-high" style="color: var(--accent);"></i> Painel Administrativo</h2>
+            <button onclick="closeAdmin()" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Fechar Painel</button>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('appointments-tab', this)">Agendamentos</button>
+            <button class="tab-btn" onclick="switchTab('analytics-tab', this)">Gráficos e Estatísticas</button>
+            <button class="tab-btn" onclick="switchTab('services-tab', this)">Gerir Serviços & Preços</button>
+        </div>
+
+        <!-- Tab Agendamentos -->
+        <div id="appointments-tab" class="admin-panel-content active">
+            <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Gestão de Clientes Agendados</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminAppointmentsTable">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Gráficos -->
+        <div id="analytics-tab" class="admin-panel-content">
+            <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Métricas de Desempenho</h3>
+            <div class="charts-grid">
+                <div class="chart-box">
+                    <canvas id="servicesChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Serviços e Valores Editáveis + Adicionar Novo -->
+        <div id="services-tab" class="admin-panel-content">
+            <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Adicionar Novo Serviço</h3>
+            <div style="background: rgba(0,229,255,0.03); padding: 20px; border-radius: 10px; border: 1px solid rgba(0,229,255,0.2); margin-bottom: 30px; display: grid; gap: 15px;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <input type="text" id="new-serv-name" placeholder="Nome do Serviço (Ex: Polimento de Faróis)" style="flex: 2; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <input type="text" id="new-serv-price" placeholder="Preço (Ex: R$ 150,00)" style="flex: 1; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <select id="new-serv-icon" style="flex: 1; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                        <option value="fa-solid fa-shield-halved">Ícone: Escudo</option>
+                        <option value="fa-solid fa-car-side">Ícone: Carro</option>
+                        <option value="fa-solid fa-spray-can-sparkles">Ícone: Spray/Limpeza</option>
+                        <option value="fa-solid fa-lightbulb">Ícone: Farol/Luz</option>
+                        <option value="fa-solid fa-ring">Ícone: Brilho/Detalhe</option>
+                    </select>
+                </div>
+                <textarea id="new-serv-desc" rows="2" placeholder="Descrição detalhada do serviço..." style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: 'Poppins';"></textarea>
+                <button onclick="addNewService()" class="btn btn-primary" style="justify-content: center; padding: 12px;"><i class="fa-solid fa-plus"></i> Adicionar Serviço</button>
+            </div>
+
+            <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Serviços Existentes (Editar / Eliminar)</h3>
+            <div id="editableServicesList" style="display: grid; gap: 20px;">
+                <!-- Carregado via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL DO SITE -->
+    <div id="main-site-content">
+        <!-- Hero Section -->
+        <section id="home">
+            <div class="hero-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Detalhes que Impressionam</div>
+            <h1>O PADRÃO MÁXIMO EM <br><span>ESTÉTICA AUTOMOTIVA</span></h1>
+            <p>Eleve o nível do seu veículo com tecnologias avançadas de polimento técnico, vitrificação cerâmica e proteção de alta performance.</p>
+            <div class="btn-group">
+                <a href="#agendamento" class="btn btn-primary">AGENDAR AGORA <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://instagram.com/vinipolimentos_26" target="_blank" class="btn btn-outline"><i class="fa-brands fa-instagram"></i> INSTAGRAM</a>
+            </div>
+        </section>
+
+        <!-- Serviços -->
+        <section id="servicos">
+            <div class="section-header">
+                <h2>Nossas <span>Especialidades</span></h2>
+                <p>Trabalho artesanal unido à inovação química para proteger o seu património.</p>
+            </div>
+            <div class="services-grid" id="publicServicesGrid">
+                <!-- Renderizado dinamicamente pelo JS -->
+            </div>
+        </section>
+
+        <!-- Agendamento com Supabase -->
+        <section id="agendamento">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <h2>Agende a sua <span>Avaliação</span></h2>
+                <p>Preencha os dados abaixo para registar o seu agendamento no sistema e ser direcionado ao WhatsApp.</p>
+            </div>
+            
+            <div class="booking-wrapper">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="userName" placeholder="Ex: Joao Silva">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Modelo do Veículo</label>
+                        <input type="text" id="userCar" placeholder="Ex: BMW M3">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Serviço Pretendido</label>
+                        <select id="userService">
+                            <!-- Preenchido dinamicamente -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data Sugerida</label>
+                        <input type="date" id="userDate">
+                    </div>
+
+                    <div class="form-group full">
+                        <button onclick="handleBooking()" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 18px;">
+                            CONFIRMAR AGENDAMENTO <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Localização e Avaliação -->
+        <section id="localizacao" style="padding-top: 20px; padding-bottom: 20px;">
+            <div class="loc-content">
+                <i class="fa-solid fa-location-dot"></i>
+                <h2>Visite a Nossa Oficina</h2>
+                <p>São José dos Campos - SP<br>Venha conhecer o nosso espaço e dar o tratamento que o seu carro merece.</p>
+                
+                <div class="btn-group" style="margin-top: 10px;">
+                    <a href="https://maps.app.goo.gl/sUnc3AuZ3jw14Bpw5" target="_blank" class="btn btn-outline">
+                        <i class="fa-solid fa-map-location-dot"></i> ABRIR NO MAPS
+                    </a>
+                    <a href="https://www.google.com/search?client=ms-android-samsung-ss&hs=CyOB&sca_esv=9690ff17f276db6e&sxsrf=APpeQntuD-zhvkJ2m3iH-9mP32DoR1JMLw:1790874233331&q=avalia%C3%A7%C3%B5es+sobre+vini+polimentos+26+s%C3%A3o+jos%C3%A9+dos+campos&uds=AJ5uw1-R4qxIGLz0m5lwBxhmmmavkfRyIgd89xpvq_PsfYb9qYtwQzXQ5bnR0lo3tTw4Fz_Fwno5w7AHWJ4F5yp4-VvrIKgozPTWINN9qQCNOTrVwOY_P4xMiTqbe8UF385wvODNewaJ6NTPLRs2zXv9elT4ta4G_wQbOraXtXmGQu3So1KesG7izN--ljLV_Y4VcQD1jaJzcOYiuTUs-hJtXq-9SZpzDrnAYeMDrH1bqwp_L2uZG5yrDoODyvvr3S3Fa3RU3m5yTHoM9Bd5-bkjFLIQ8MwJb61nwUJA2uyJigMfgHcTB_fALh11wV4SEbZtLdukLmbLf74Doq18tc7L128HaaLYyJ2V7RqNVc6re_Ut0P5Z73QKAYc4EArbhcnP5IT1kRVU8__ypN3tkg5ja6r_twJ6leXemLRXELMqzyBbMhgXobaybj_4g2ABjj42YNyx5GBPud4vRuetfD-D7QJgRbdOKzMQyTbR7qMtmu7PD-pzkDLCPSeWiDYSfJovve32Ei9zZ2BECd3STvCmVsK47JX58KTHWgHF0ke8dqlM26Rg1ga8yowXAKk5dxQGDkl692NSWFENUNg4OaXvvFU-3H86QXN6TR6tBrD9We_3vLGVP6A&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_xVtc1R_NrVD03FxQ6bQCBivmHHVZs2jPbig9wuEVk_kf_e3df9u5_Ox2JBXbjSCxaH_2tZbo0EJrRq6uYAlmaMXeEZofPEcDyjzV2FIBMUs_XDX1RuPy6c2MqAskstzsP_8YtaHz4Y80eKIUg3lEnZoGh2A&sa=X&ved=2ahUKEwiI-460ppmXAxUdqpUCHQMLO1EQk8gLegQIGRAB&ictx=1&biw=384&bih=715&dpr=1.88" target="_blank" class="btn btn-google">
+                        <i class="fa-brands fa-google"></i> VER AVALIAÇÕES NO GOOGLE
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Rodapé com o link para o Instagram -->
+    <footer>
+        <p>&copy; 2026 Vini Polimentos Premium | Todos os direitos reservados.</p>
+        <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
+    </footer>
+
+    <!-- Script Principal -->
+    <script>
+        const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s';
+
+        let supabaseClient = null;
+        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        let servicesData = JSON.parse(localStorage.getItem('vini_services')) || [
+            { id: 1, name: 'Vitrificação 9H', price: 'R$ 890,00', desc: 'Película protetora de alta dureza contra raios UV, resina de árvores, fezes de aves e riscos superficiais com hidro-repelência extrema.', icon: 'fa-solid fa-shield-halved' },
+            { id: 2, name: 'Polimento Técnico', price: 'R$ 650,00', desc: 'Remoção cirúrgica de hologramas, swirls e micro-riscos, devolvendo a profundidade absoluta de cor e reflexo espelhado à pintura.', icon: 'fa-solid fa-car-side' },
+            { id: 3, name: 'Higienização Premium', price: 'R$ 350,00', desc: 'Limpeza bactericida profunda de estofos, couros e painéis, com hidratação nutritiva e eliminação completa de odores.', icon: 'fa-solid fa-spray-can-sparkles' }
+        ];
+
+        let appointmentsList = JSON.parse(localStorage.getItem('vini_appointments')) || [
+            { id: 1, client_name: 'Joao Silva', vehicle: 'BMW M3', service: 'Polimento Técnico', date: '2026-04-15', status: 'Confirmado' },
+            { id: 2, client_name: 'Carlos Souza', vehicle: 'Porsche 911', service: 'Vitrificação 9H', date: '2026-04-18', status: 'Pendente' }
+        ];
+
+        let sChartInstance = null;
+        let statusChartInstance = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (supabaseClient) {
+                try {
+                    const { data: dbServices } = await supabaseClient.from('services').select('*');
+                    if (dbServices && dbServices.length > 0) {
+                        servicesData = dbServices;
+                    }
+                    const { data: dbApps } = await supabaseClient.from('appointments').select('*');
+                    if (dbApps && dbApps.length > 0) {
+                        appointmentsList = dbApps;
+                    }
+                } catch(e) {
+                    console.log("Modo offline ou erro ao carregar do Supabase:", e);
+                }
+            }
+            renderPublicServices();
+            renderServiceDropdown();
+        });
+
+        function renderPublicServices() {
+            const grid = document.getElementById('publicServicesGrid');
+            grid.innerHTML = '';
+            servicesData.forEach(s => {
+                grid.innerHTML += `
+                    <div class="service-card">
+                        <i class="${s.icon || 'fa-solid fa-car'}"></i>
+                        <h3>${s.name}</h3>
+                        <span class="price-tag">${s.price}</span>
+                        <p>${s.desc || s.description || ''}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function renderServiceDropdown() {
+            const select = document.getElementById('userService');
+            select.innerHTML = '';
+            servicesData.forEach(s => {
+                select.innerHTML += `<option value="${s.name}">${s.name} (${s.price})</option>`;
+            });
+        }
+
+        async function handleBooking() {
+            const name = document.getElementById('userName').value.trim();
+            const car = document.getElementById('userCar').value.trim();
+            const service = document.getElementById('userService').value;
+            const date = document.getElementById('userDate').value;
+
+            if(!name || !car || !date) {
+                alert("Por favor, preencha todos os campos do formulário.");
+                return;
+            }
+
+            const newApp = { client_name: name, vehicle: car, service: service, date: date, status: 'Pendente' };
+            appointmentsList.push(newApp);
+            localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('appointments').insert([newApp]);
+                } catch (err) {
+                    console.error("Erro Supabase:", err);
+                }
+            }
+
+            const formattedDate = date.split('-').reverse().join('/');
+            const text = `Olá Vini! Gostaria de agendar um serviço pelo site:%0A%0A` +
+                         `*Cliente:* ${name}%0A` +
+                         `*Veículo:* ${car}%0A` +
+                         `*Serviço:* ${service}%0A` +
+                         `*Data Sugerida:* ${formattedDate}`;
+
+            window.open(`https://wa.me/5512988879367?text=${text}`, '_blank');
+        }
+
+        function openAdminLogin() {
+            const pwd = prompt("Digite a senha de administrador:");
+            if (pwd === "systemsjc_vini") {
+                document.getElementById('main-site-content').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                renderAdminAppointments();
+                renderAdminEditableServices();
+                renderCharts();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } else if (pwd !== null) {
+                alert("Senha incorreta!");
+            }
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-section').style.display = 'none';
+            document.getElementById('main-site-content').style.display = 'block';
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.admin-panel-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            if(tabId === 'analytics-tab') renderCharts();
+        }
+
+        function renderAdminAppointments() {
+            const tbody = document.getElementById('adminAppointmentsTable');
+            tbody.innerHTML = '';
+            if (appointmentsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">Nenhum agendamento registado.</td></tr>`;
+                return;
+            }
+            appointmentsList.forEach((app, index) => {
+                const statusBadge = app.status === 'Confirmado' 
+                    ? `<span style="color: #10b981; font-weight:600;"><i class="fa-solid fa-circle-check"></i> Confirmado</span>` 
+                    : `<span style="color: #f59e0b; font-weight:600;"><i class="fa-solid fa-clock"></i> Pendente</span>`;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${app.client_name}</td>
+                        <td>${app.vehicle}</td>
+                        <td>${app.service}</td>
+                        <td>${app.date}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            ${app.status !== 'Confirmado' ? `<button onclick="toggleConfirm(${index})" class="btn btn-success" style="margin-right:5px;">Confirmar</button>` : ''}
+                            <button onclick="deleteAppointment(${index})" class="btn btn-danger">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function toggleConfirm(index) {
+            appointmentsList[index].status = 'Confirmado';
+            localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
+            renderAdminAppointments();
+            renderCharts();
+            if (supabaseClient && appointmentsList[index].id) {
+                await supabaseClient.from('appointments').update({ status: 'Confirmado' }).eq('id', appointmentsList[index].id);
+            }
+        }
+
+        async function deleteAppointment(index) {
+            if(confirm("Tem certeza que deseja eliminar este agendamento?")) {
+                const removed = appointmentsList.splice(index, 1);
+                localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
+                renderAdminAppointments();
+                renderCharts();
+                if (supabaseClient && removed[0].id) {
+                    await supabaseClient.from('appointments').delete().eq('id', removed[0].id);
+                }
+            }
+        }
+
+        function renderAdminEditableServices() {
+            const container = document.getElementById('editableServicesList');
+            container.innerHTML = '';
+            servicesData.forEach((s, idx) => {
+                container.innerHTML += `
+                    <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid var(--border-glass); display: grid; gap: 10px;">
+                        <div style="display: flex; gap: 15px;">
+                            <input type="text" id="serv-name-${idx}" value="${s.name}" placeholder="Nome do Serviço" style="flex: 2; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                            <input type="text" id="serv-price-${idx}" value="${s.price}" placeholder="Preço" style="flex: 1; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                        </div>
+                        <textarea id="serv-desc-${idx}" rows="2" placeholder="Descrição" style="width: 100%; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: 'Poppins';">${s.desc || s.description || ''}</textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="saveServiceChanges(${idx})" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 10px;">Guardar Alterações</button>
+                            <button onclick="deleteService(${idx})" class="btn btn-danger" style="padding: 10px 20px;"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function addNewService() {
+            const name = document.getElementById('new-serv-name').value.trim();
+            const price = document.getElementById('new-serv-price').value.trim();
+            const desc = document.getElementById('new-serv-desc').value.trim();
+            const icon = document.getElementById('new-serv-icon').value;
+
+            if(!name || !price) {
+                alert("Por favor, preencha pelo menos o nome e o preço do serviço.");
+                return;
+            }
+
+            const newServiceObj = { name, price, desc, icon };
+            servicesData.push(newServiceObj);
+            localStorage.setItem('vini_services', JSON.stringify(servicesData));
+
+            if (supabaseClient) {
+                try {
+                    const { data } = await supabaseClient.from('services').insert([newServiceObj]).select();
+                    if (data && data[0]) {
+                        newServiceObj.id = data[0].id;
+                        localStorage.setItem('vini_services', JSON.stringify(servicesData));
+                    }
+                } catch(err) {
+                    console.error("Erro Supabase:", err);
+                }
+            }
+
+            document.getElementById('new-serv-name').value = '';
+            document.getElementById('new-serv-price').value = '';
+            document.getElementById('new-serv-desc').value = '';
+
+            renderPublicServices();
+            renderServiceDropdown();
+            renderAdminEditableServices();
+            alert("Novo serviço adicionado com sucesso!");
+        }
+
+        async function saveServiceChanges(idx) {
+            servicesData[idx].name = document.getElementById(`serv-name-${idx}`).value;
+            servicesData[idx].price = document.getElementById(`serv-price-${idx}`).value;
+            servicesData[idx].desc = document.getElementById(`serv-desc-${idx}`).value;
+            
+            localStorage.setItem('vini_services', JSON.stringify(servicesData));
+            renderPublicServices();
+            renderServiceDropdown();
+            alert("Serviço atualizado com sucesso!");
+
+            if (supabaseClient && servicesData[idx].id) {
+                await supabaseClient.from('services').update({
+                    name: servicesData[idx].name,
+                    price: servicesData[idx].price,
+                    desc: servicesData[idx].desc
+                }).eq('id', servicesData[idx].id);
+            }
+        }
+
+        async function deleteService(idx) {
+            if(confirm("Tem certeza que deseja eliminar este serviço?")) {
+                const removed = servicesData.splice(idx, 1);
+                localStorage.setItem('vini_services', JSON.stringify(servicesData));
+                renderPublicServices();
+                renderServiceDropdown();
+                renderAdminEditableServices();
+                renderCharts();
+
+                if (supabaseClient && removed[0].id) {
+                    await supabaseClient.from('services').delete().eq('id', removed[0].id);
+                }
+            }
+        }
+
+        function renderCharts() {
+            const serviceCounts = {};
+            servicesData.forEach(s => serviceCounts[s.name] = 0);
+            appointmentsList.forEach(app => {
+                if(serviceCounts[app.service] !== undefined) {
+                    serviceCounts[app.service]++;
+                } else {
+                    serviceCounts[app.service] = 1;
+                }
+            });
+
+            let confirmedCount = appointmentsList.filter(a => a.status === 'Confirmado').length;
+            let pendingCount = appointmentsList.filter(a => a.status !== 'Confirmado').length;
+
+            const ctx1 = document.getElementById('servicesChart').getContext('2d');
+            if(sChartInstance) sChartInstance.destroy();
+            sChartInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(serviceCounts),
+                    datasets: [{
+                        label: 'Agendamentos por Serviço',
+                        data: Object.values(serviceCounts),
+                        backgroundColor: '#00e5ff',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#fff' } } },
+                    scales: {
+                        x: { ticks: { color: '#a1a1aa' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#a1a1aa' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('statusChart').getContext('2d');
+            if(statusChartInstance) statusChartInstance.destroy();
+            statusChartInstance = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Confirmados', 'Pendentes'],
+                    datasets: [{
+                        data: [confirmedCount, pendingCount],
+                        backgroundColor: ['#10b981', '#f59e0b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#fff' } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
