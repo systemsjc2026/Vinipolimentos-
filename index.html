@@ -390,8 +390,8 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s';
 
         let supabaseClient = null;
-        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s) {
+            supabaseClient = supabase.createClient(https://lmkohxpxijxdjrvyjzla.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s);
         }
 
         let servicesData = JSON.parse(localStorage.getItem('vini_services')) || [
