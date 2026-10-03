@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Supabase SDK & Chart.js para os Gráficos -->
+    <!-- Supabase SDK & Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -41,7 +41,7 @@
         /* --- Header / Navegação --- */
         header {
             position: fixed; width: 100%; top: 0; z-index: 1000;
-            background: rgba(7, 7, 7, 0.85); backdrop-filter: blur(16px);
+            background: rgba(7, 7, 7, 0.9); backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-glass);
             transition: var(--transition);
         }
@@ -51,10 +51,9 @@
             padding: 0.8rem 5%;
         }
         
-        /* Logo bem maior */
-        .logo-img { height: 90px; width: auto; object-fit: contain; transition: var(--transition); }
+        .logo-img { height: 85px; width: auto; object-fit: contain; }
 
-        .nav-right-container { display: flex; align-items: center; gap: 25px; }
+        .nav-right-container { display: flex; align-items: center; gap: 20px; }
         .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
         .nav-links a {
             font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
@@ -63,7 +62,7 @@
         }
         .nav-links a:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
         .admin-link {
-            background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent);
+            background: rgba(0, 229, 255, 0.15); border: 1px solid var(--accent);
             padding: 8px 16px; border-radius: 6px; color: var(--accent) !important;
             font-size: 0.8rem !important; font-weight: 600 !important; cursor: pointer;
             transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
@@ -192,8 +191,8 @@
         .jc-brand { color: var(--accent); font-weight: 600; text-decoration: none; }
 
         @media (max-width: 768px) {
-            .nav-links { display: none; } /* Oculta os links rápidos no telemóvel, mas o botão ADMIN continua visível */
-            .logo-img { height: 65px; } /* Ajuste proporcional da logo maior em telas pequenas */
+            .nav-links { display: none; }
+            .logo-img { height: 60px; }
             .form-grid { grid-template-columns: 1fr; }
             .form-group.full { grid-column: span 1; }
             #home { background-attachment: scroll; }
@@ -203,7 +202,7 @@
 </head>
 <body>
 
-    <!-- Header com a Logo Maior e o Botão Admin Sempre Visível (inclusive no Telemóvel) -->
+    <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="logo">
@@ -269,7 +268,7 @@
             </div>
         </div>
 
-        <!-- Tab Serviços e Valores Editáveis + Adicionar Novo -->
+        <!-- Tab Serviços -->
         <div id="services-tab" class="admin-panel-content">
             <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Adicionar Novo Serviço</h3>
             <div style="background: rgba(0,229,255,0.03); padding: 20px; border-radius: 10px; border: 1px solid rgba(0,229,255,0.2); margin-bottom: 30px; display: grid; gap: 15px;">
@@ -315,11 +314,11 @@
                 <p>Trabalho artesanal unido à inovação química para proteger o seu património.</p>
             </div>
             <div class="services-grid" id="publicServicesGrid">
-                <!-- Renderizado dinamicamente pelo JS -->
+                <!-- Renderizado via JS -->
             </div>
         </section>
 
-        <!-- Agendamento com Supabase -->
+        <!-- Agendamento -->
         <section id="agendamento">
             <div class="section-header" style="margin-bottom: 40px;">
                 <h2>Agende a sua <span>Avaliação</span></h2>
@@ -359,7 +358,7 @@
             </div>
         </section>
 
-        <!-- Seção de Localização e Avaliação -->
+        <!-- Localização -->
         <section id="localizacao" style="padding-top: 20px; padding-bottom: 20px;">
             <div class="loc-content">
                 <i class="fa-solid fa-location-dot"></i>
@@ -378,31 +377,34 @@
         </section>
     </div>
 
-    <!-- Rodapé com o link para o Instagram -->
+    <!-- Rodapé -->
     <footer>
         <p>&copy; 2026 Vini Polimentos Premium | Todos os direitos reservados.</p>
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal -->
+    <!-- Script Principal com Fallback de Segurança -->
     <script>
         const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // Lembre-se de colocar sua chave real aqui se desejar nuvem
 
         let supabaseClient = null;
-        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s) {
-            supabaseClient = supabase.createClient(https://lmkohxpxijxdjrvyjzla.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s);
+        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch(e) { console.log("Erro ao iniciar Supabase", e); }
         }
 
-        let servicesData = JSON.parse(localStorage.getItem('vini_services')) || [
+        // Serviços padrão de segurança caso a base de dados esteja vazia
+        const defaultServices = [
             { id: 1, name: 'Vitrificação 9H', price: 'R$ 890,00', desc: 'Película protetora de alta dureza contra raios UV, resina de árvores, fezes de aves e riscos superficiais com hidro-repelência extrema.', icon: 'fa-solid fa-shield-halved' },
             { id: 2, name: 'Polimento Técnico', price: 'R$ 650,00', desc: 'Remoção cirúrgica de hologramas, swirls e micro-riscos, devolvendo a profundidade absoluta de cor e reflexo espelhado à pintura.', icon: 'fa-solid fa-car-side' },
             { id: 3, name: 'Higienização Premium', price: 'R$ 350,00', desc: 'Limpeza bactericida profunda de estofos, couros e painéis, com hidratação nutritiva e eliminação completa de odores.', icon: 'fa-solid fa-spray-can-sparkles' }
         ];
 
+        let servicesData = JSON.parse(localStorage.getItem('vini_services')) || defaultServices;
         let appointmentsList = JSON.parse(localStorage.getItem('vini_appointments')) || [
-            { id: 1, client_name: 'Joao Silva', vehicle: 'BMW M3', service: 'Polimento Técnico', date: '2026-04-15', status: 'Confirmado' },
-            { id: 2, client_name: 'Carlos Souza', vehicle: 'Porsche 911', service: 'Vitrificação 9H', date: '2026-04-18', status: 'Pendente' }
+            { id: 1, client_name: 'Joao Silva', vehicle: 'Fiat Punto', service: 'Polimento Técnico', date: '2026-04-15', status: 'Confirmado' }
         ];
 
         let sChartInstance = null;
@@ -414,21 +416,29 @@
                     const { data: dbServices } = await supabaseClient.from('services').select('*');
                     if (dbServices && dbServices.length > 0) {
                         servicesData = dbServices;
+                        localStorage.setItem('vini_services', JSON.stringify(servicesData));
                     }
                     const { data: dbApps } = await supabaseClient.from('appointments').select('*');
                     if (dbApps && dbApps.length > 0) {
                         appointmentsList = dbApps;
+                        localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
                     }
                 } catch(e) {
                     console.log("Modo offline ou erro ao carregar do Supabase:", e);
                 }
             }
+
+            if (!servicesData || servicesData.length === 0) {
+                servicesData = defaultServices;
+            }
+
             renderPublicServices();
             renderServiceDropdown();
         });
 
         function renderPublicServices() {
             const grid = document.getElementById('publicServicesGrid');
+            if(!grid) return;
             grid.innerHTML = '';
             servicesData.forEach(s => {
                 grid.innerHTML += `
@@ -444,6 +454,7 @@
 
         function renderServiceDropdown() {
             const select = document.getElementById('userService');
+            if(!select) return;
             select.innerHTML = '';
             servicesData.forEach(s => {
                 select.innerHTML += `<option value="${s.name}">${s.name} (${s.price})</option>`;
@@ -512,6 +523,7 @@
 
         function renderAdminAppointments() {
             const tbody = document.getElementById('adminAppointmentsTable');
+            if(!tbody) return;
             tbody.innerHTML = '';
             if (appointmentsList.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">Nenhum agendamento registado.</td></tr>`;
@@ -562,6 +574,7 @@
 
         function renderAdminEditableServices() {
             const container = document.getElementById('editableServicesList');
+            if(!container) return;
             container.innerHTML = '';
             servicesData.forEach((s, idx) => {
                 container.innerHTML += `
@@ -665,9 +678,10 @@
             let confirmedCount = appointmentsList.filter(a => a.status === 'Confirmado').length;
             let pendingCount = appointmentsList.filter(a => a.status !== 'Confirmado').length;
 
-            const ctx1 = document.getElementById('servicesChart').getContext('2d');
+            const ctx1 = document.getElementById('servicesChart');
+            if(!ctx1) return;
             if(sChartInstance) sChartInstance.destroy();
-            sChartInstance = new Chart(ctx1, {
+            sChartInstance = new Chart(ctx1.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: Object.keys(serviceCounts),
@@ -688,9 +702,10 @@
                 }
             });
 
-            const ctx2 = document.getElementById('statusChart').getContext('2d');
+            const ctx2 = document.getElementById('statusChart');
+            if(!ctx2) return;
             if(statusChartInstance) statusChartInstance.destroy();
-            statusChartInstance = new Chart(ctx2, {
+            statusChartInstance = new Chart(ctx2.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: ['Confirmados', 'Pendentes'],
