@@ -382,16 +382,16 @@
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal com Depuração Direta -->
+    <!-- Script Principal Conectado Direto -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
         const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // <-- Insira sua chave real aqui
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s';
 
         let supabaseClient = null;
         try {
-            if (SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
+            if (SUPABASE_URL && SUPABASE_ANON_KEY) {
                 supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(e) {
@@ -598,7 +598,7 @@
             const newServiceObj = { name, price, description, icon };
 
             if (!supabaseClient) {
-                alert("Erro: A chave 'anon' não passou na validação. Verifique se colou a chave completa no topo do script.");
+                alert("Erro: O Supabase não está conectado.");
                 return;
             }
 
