@@ -383,10 +383,10 @@
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal com Fallback de Segurança -->
+    <!-- Script Principal Sincronizado com Supabase -->
     <script>
         const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // Lembre-se de colocar sua chave real aqui se desejar nuvem
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // <-- Substitua pela sua chave real!
 
         let supabaseClient = null;
         if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
@@ -395,39 +395,33 @@
             } catch(e) { console.log("Erro ao iniciar Supabase", e); }
         }
 
-        // Serviços padrão de segurança caso a base de dados esteja vazia
         const defaultServices = [
-            { id: 1, name: 'Vitrificação 9H', price: 'R$ 890,00', desc: 'Película protetora de alta dureza contra raios UV, resina de árvores, fezes de aves e riscos superficiais com hidro-repelência extrema.', icon: 'fa-solid fa-shield-halved' },
-            { id: 2, name: 'Polimento Técnico', price: 'R$ 650,00', desc: 'Remoção cirúrgica de hologramas, swirls e micro-riscos, devolvendo a profundidade absoluta de cor e reflexo espelhado à pintura.', icon: 'fa-solid fa-car-side' },
-            { id: 3, name: 'Higienização Premium', price: 'R$ 350,00', desc: 'Limpeza bactericida profunda de estofos, couros e painéis, com hidratação nutritiva e eliminação completa de odores.', icon: 'fa-solid fa-spray-can-sparkles' }
+            { id: 1, name: 'Vitrificação 9H', price: 'R$ 890,00', description: 'Película protetora de alta dureza contra raios UV, resina de árvores, fezes de aves e riscos superficiais com hidro-repelência extrema.', icon: 'fa-solid fa-shield-halved' },
+            { id: 2, name: 'Polimento Técnico', price: 'R$ 650,00', description: 'Remoção cirúrgica de hologramas, swirls e micro-riscos, devolvendo a profundidade absoluta de cor e reflexo espelhado à pintura.', icon: 'fa-solid fa-car-side' },
+            { id: 3, name: 'Higienização Premium', price: 'R$ 350,00', description: 'Limpeza bactericida profunda de estofos, couros e painéis, com hidratação nutritiva e eliminação completa de odores.', icon: 'fa-solid fa-spray-can-sparkles' }
         ];
 
-        let servicesData = JSON.parse(localStorage.getItem('vini_services')) || defaultServices;
-        let appointmentsList = JSON.parse(localStorage.getItem('vini_appointments')) || [
-            { id: 1, client_name: 'Joao Silva', vehicle: 'Fiat Punto', service: 'Polimento Técnico', date: '2026-04-15', status: 'Confirmado' }
-        ];
-
-        let sChartInstance = null;
-        let statusChartInstance = null;
+        let servicesData = [];
+        let appointmentsList = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
+            // Tenta carregar do Supabase (Nuvem) primeiro
             if (supabaseClient) {
                 try {
                     const { data: dbServices } = await supabaseClient.from('services').select('*');
                     if (dbServices && dbServices.length > 0) {
                         servicesData = dbServices;
-                        localStorage.setItem('vini_services', JSON.stringify(servicesData));
                     }
                     const { data: dbApps } = await supabaseClient.from('appointments').select('*');
                     if (dbApps && dbApps.length > 0) {
                         appointmentsList = dbApps;
-                        localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
                     }
                 } catch(e) {
-                    console.log("Modo offline ou erro ao carregar do Supabase:", e);
+                    console.log("Erro ao buscar dados do Supabase:", e);
                 }
             }
 
+            // Se o banco estiver vazio ou offline, usa os padrões locais
             if (!servicesData || servicesData.length === 0) {
                 servicesData = defaultServices;
             }
@@ -446,7 +440,7 @@
                         <i class="${s.icon || 'fa-solid fa-car'}"></i>
                         <h3>${s.name}</h3>
                         <span class="price-tag">${s.price}</span>
-                        <p>${s.desc || s.description || ''}</p>
+                        <p>${s.description || s.desc || ''}</p>
                     </div>
                 `;
             });
@@ -474,7 +468,6 @@
 
             const newApp = { client_name: name, vehicle: car, service: service, date: date, status: 'Pendente' };
             appointmentsList.push(newApp);
-            localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
 
             if (supabaseClient) {
                 try {
@@ -552,7 +545,6 @@
 
         async function toggleConfirm(index) {
             appointmentsList[index].status = 'Confirmado';
-            localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
             renderAdminAppointments();
             renderCharts();
             if (supabaseClient && appointmentsList[index].id) {
@@ -563,7 +555,6 @@
         async function deleteAppointment(index) {
             if(confirm("Tem certeza que deseja eliminar este agendamento?")) {
                 const removed = appointmentsList.splice(index, 1);
-                localStorage.setItem('vini_appointments', JSON.stringify(appointmentsList));
                 renderAdminAppointments();
                 renderCharts();
                 if (supabaseClient && removed[0].id) {
@@ -583,7 +574,7 @@
                             <input type="text" id="serv-name-${idx}" value="${s.name}" placeholder="Nome do Serviço" style="flex: 2; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
                             <input type="text" id="serv-price-${idx}" value="${s.price}" placeholder="Preço" style="flex: 1; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px;">
                         </div>
-                        <textarea id="serv-desc-${idx}" rows="2" placeholder="Descrição" style="width: 100%; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: 'Poppins';">${s.desc || s.description || ''}</textarea>
+                        <textarea id="serv-desc-${idx}" rows="2" placeholder="Descrição" style="width: 100%; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: 'Poppins';">${s.description || s.desc || ''}</textarea>
                         <div style="display: flex; gap: 10px;">
                             <button onclick="saveServiceChanges(${idx})" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 10px;">Guardar Alterações</button>
                             <button onclick="deleteService(${idx})" class="btn btn-danger" style="padding: 10px 20px;"><i class="fa-solid fa-trash"></i> Eliminar</button>
@@ -596,7 +587,7 @@
         async function addNewService() {
             const name = document.getElementById('new-serv-name').value.trim();
             const price = document.getElementById('new-serv-price').value.trim();
-            const desc = document.getElementById('new-serv-desc').value.trim();
+            const description = document.getElementById('new-serv-desc').value.trim();
             const icon = document.getElementById('new-serv-icon').value;
 
             if(!name || !price) {
@@ -604,20 +595,24 @@
                 return;
             }
 
-            const newServiceObj = { name, price, desc, icon };
-            servicesData.push(newServiceObj);
-            localStorage.setItem('vini_services', JSON.stringify(servicesData));
+            const newServiceObj = { name, price, description, icon };
 
             if (supabaseClient) {
                 try {
-                    const { data } = await supabaseClient.from('services').insert([newServiceObj]).select();
+                    const { data, error } = await supabaseClient.from('services').insert([newServiceObj]).select();
+                    if (error) {
+                        console.error("Erro Supabase:", error);
+                        alert("Erro ao salvar no banco de dados: " + error.message);
+                        return;
+                    }
                     if (data && data[0]) {
-                        newServiceObj.id = data[0].id;
-                        localStorage.setItem('vini_services', JSON.stringify(servicesData));
+                        servicesData.push(data[0]);
                     }
                 } catch(err) {
-                    console.error("Erro Supabase:", err);
+                    console.error("Erro de rede Supabase:", err);
                 }
+            } else {
+                servicesData.push(newServiceObj);
             }
 
             document.getElementById('new-serv-name').value = '';
@@ -627,15 +622,14 @@
             renderPublicServices();
             renderServiceDropdown();
             renderAdminEditableServices();
-            alert("Novo serviço adicionado com sucesso!");
+            alert("Novo serviço adicionado e sincronizado na nuvem com sucesso!");
         }
 
         async function saveServiceChanges(idx) {
             servicesData[idx].name = document.getElementById(`serv-name-${idx}`).value;
             servicesData[idx].price = document.getElementById(`serv-price-${idx}`).value;
-            servicesData[idx].desc = document.getElementById(`serv-desc-${idx}`).value;
+            servicesData[idx].description = document.getElementById(`serv-desc-${idx}`).value;
             
-            localStorage.setItem('vini_services', JSON.stringify(servicesData));
             renderPublicServices();
             renderServiceDropdown();
             alert("Serviço atualizado com sucesso!");
@@ -644,7 +638,7 @@
                 await supabaseClient.from('services').update({
                     name: servicesData[idx].name,
                     price: servicesData[idx].price,
-                    desc: servicesData[idx].desc
+                    description: servicesData[idx].description
                 }).eq('id', servicesData[idx].id);
             }
         }
@@ -652,7 +646,6 @@
         async function deleteService(idx) {
             if(confirm("Tem certeza que deseja eliminar este serviço?")) {
                 const removed = servicesData.splice(idx, 1);
-                localStorage.setItem('vini_services', JSON.stringify(servicesData));
                 renderPublicServices();
                 renderServiceDropdown();
                 renderAdminEditableServices();
