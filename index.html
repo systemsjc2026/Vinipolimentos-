@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Supabase SDK & Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -383,15 +382,17 @@
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal 100% Blindado -->
-    <script>
+    <!-- Script Principal com Módulo Supabase Oficial -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
         const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // Insira sua chave real aqui
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // <-- Insira sua chave real aqui
 
         let supabaseClient = null;
         try {
-            if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            if (SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
+                supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(e) {
             console.error("Aviso Supabase:", e);
@@ -595,11 +596,7 @@
             const newServiceObj = { name, price, description, icon };
 
             if (!supabaseClient) {
-                alert("Aviso: Supabase não conectado. O serviço foi adicionado apenas localmente.");
-                servicesData.push(newServiceObj);
-                renderPublicServices();
-                renderServiceDropdown();
-                renderAdminEditableServices();
+                alert("Erro: O Supabase não está conectado. Verifique se a chave Anon foi preenchida corretamente.");
                 return;
             }
 
@@ -710,6 +707,17 @@
                 }
             });
         }
+
+        // Expor funções globais para os botões do HTML
+        window.openAdminLogin = openAdminLogin;
+        window.closeAdmin = closeAdmin;
+        window.switchTab = switchTab;
+        window.addNewService = addNewService;
+        window.saveServiceChanges = saveServiceChanges;
+        window.deleteService = deleteService;
+        window.handleBooking = handleBooking;
+        window.toggleConfirm = toggleConfirm;
+        window.deleteAppointment = deleteAppointment;
     </script>
 </body>
 </html>
