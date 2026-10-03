@@ -383,16 +383,18 @@
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal com Depuração Ativa -->
+    <!-- Script Principal 100% Blindado -->
     <script>
         const SUPABASE_URL = 'https://lmkohxpxijxdjrvyjzla.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s'; // Insira sua chave real aqui
 
         let supabaseClient = null;
-        if (SUPABASE_URL && SUPABASE_URL.includes('supabase.co') && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s) {
-            try {
+        try {
+            if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxta29oeHB4aWp4ZGpydnlqemxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzI1NTMsImV4cCI6MjEwNjQ0ODU1M30.yfpIoZJ4OgzlEwe07MSwVWyA5mKQH5BHgbjL-pDxc2s') {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } catch(e) { console.error("Erro ao iniciar Supabase", e); }
+            }
+        } catch(e) {
+            console.error("Aviso Supabase:", e);
         }
 
         const defaultServices = [
@@ -401,29 +403,20 @@
             { id: 3, name: 'Higienização Premium', price: 'R$ 350,00', description: 'Limpeza bactericida profunda de estofos, couros e painéis, com hidratação nutritiva e eliminação completa de odores.', icon: 'fa-solid fa-spray-can-sparkles' }
         ];
 
-        let servicesData = [];
+        let servicesData = [...defaultServices];
         let appointmentsList = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
             if (supabaseClient) {
                 try {
                     const { data: dbServices, error } = await supabaseClient.from('services').select('*');
-                    if (error) {
-                        console.error("Erro ao ler serviços do Supabase:", error);
-                    } else if (dbServices && dbServices.length > 0) {
+                    if (!error && dbServices && dbServices.length > 0) {
                         servicesData = dbServices;
                     }
                 } catch(e) {
-                    console.error("Exceção ao buscar do Supabase:", e);
+                    console.log("Modo offline ativado para serviços");
                 }
-            }
 
-            if (!servicesData || servicesData.length === 0) {
-                servicesData = defaultServices;
-            }
-
-            // Carrega agendamentos também
-            if (supabaseClient) {
                 try {
                     const { data: dbApps } = await supabaseClient.from('appointments').select('*');
                     if (dbApps) appointmentsList = dbApps;
@@ -602,30 +595,30 @@
             const newServiceObj = { name, price, description, icon };
 
             if (!supabaseClient) {
-                alert("Erro: O Supabase não está configurado. A chave Anon está em falta no código.");
+                alert("Aviso: Supabase não conectado. O serviço foi adicionado apenas localmente.");
+                servicesData.push(newServiceObj);
+                renderPublicServices();
+                renderServiceDropdown();
+                renderAdminEditableServices();
                 return;
             }
 
-            // Envia para o Supabase e captura erros ou sucesso reais
             const { data, error } = await supabaseClient.from('services').insert([newServiceObj]).select();
             
             if (error) {
-                alert("Erro do Supabase ao salvar: " + error.message);
-                console.error(error);
+                alert("Erro ao salvar no Supabase: " + error.message);
                 return;
             }
 
-            alert("Serviço adicionado e gravado no Supabase com sucesso!");
-            location.reload(); // Recarrega a página para puxar os dados atualizados direto do banco
+            alert("Serviço adicionado e gravado na nuvem com sucesso!");
+            location.reload();
         }
 
         async function saveServiceChanges(idx) {
             servicesData[idx].name = document.getElementById(`serv-name-${idx}`).value;
-            servicesData[idx].price = document.getElementById(`serv-price-${idx}` ).value;
+            servicesData[idx].price = document.getElementById(`serv-price-${idx}`).value;
             servicesData[idx].description = document.getElementById(`serv-desc-${idx}`).value;
             
-            alert("Serviço atualizado com sucesso!");
-
             if (supabaseClient && servicesData[idx].id) {
                 const { error } = await supabaseClient.from('services').update({
                     name: servicesData[idx].name,
@@ -635,8 +628,11 @@
 
                 if(error) {
                     alert("Erro ao atualizar na nuvem: " + error.message);
+                    return;
                 }
             }
+
+            alert("Serviço atualizado com sucesso!");
             location.reload();
         }
 
@@ -648,11 +644,15 @@
                     const { error } = await supabaseClient.from('services').delete().eq('id', removed[0].id);
                     if(error) {
                         alert("Erro ao eliminar na nuvem: " + error.message);
+                        return;
                     }
                 }
                 location.reload();
             }
         }
+
+        let sChartInstance = null;
+        let statusChartInstance = null;
 
         function renderCharts() {
             const serviceCounts = {};
