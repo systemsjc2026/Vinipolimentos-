@@ -382,7 +382,7 @@
         <p style="margin-top: 10px;">Desenvolvido por <a href="https://instagram.com/systemsjc_" target="_blank" class="jc-brand">@systemsjc_</a></p>
     </footer>
 
-    <!-- Script Principal com Módulo Supabase Oficial -->
+    <!-- Script Principal com Depuração Direta -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -395,7 +395,7 @@
                 supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch(e) {
-            console.error("Aviso Supabase:", e);
+            console.error("Erro ao iniciar Supabase:", e);
         }
 
         const defaultServices = [
@@ -411,11 +411,13 @@
             if (supabaseClient) {
                 try {
                     const { data: dbServices, error } = await supabaseClient.from('services').select('*');
-                    if (!error && dbServices && dbServices.length > 0) {
+                    if (error) {
+                        console.error("Erro ao buscar serviços:", error.message);
+                    } else if (dbServices && dbServices.length > 0) {
                         servicesData = dbServices;
                     }
                 } catch(e) {
-                    console.log("Modo offline ativado para serviços");
+                    console.error("Exceção ao ligar ao Supabase:", e);
                 }
 
                 try {
@@ -596,14 +598,14 @@
             const newServiceObj = { name, price, description, icon };
 
             if (!supabaseClient) {
-                alert("Erro: O Supabase não está conectado. Verifique se a chave Anon foi preenchida corretamente.");
+                alert("Erro: A chave 'anon' não passou na validação. Verifique se colou a chave completa no topo do script.");
                 return;
             }
 
             const { data, error } = await supabaseClient.from('services').insert([newServiceObj]).select();
             
             if (error) {
-                alert("Erro ao salvar no Supabase: " + error.message);
+                alert("Erro retornado pelo Supabase: " + error.message);
                 return;
             }
 
@@ -708,7 +710,7 @@
             });
         }
 
-        // Expor funções globais para os botões do HTML
+        // Expor funções globais
         window.openAdminLogin = openAdminLogin;
         window.closeAdmin = closeAdmin;
         window.switchTab = switchTab;
